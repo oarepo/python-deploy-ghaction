@@ -30,6 +30,7 @@ runs:
         echo 'github.repository: ${{ github.repository }}'
         echo 'github.workflow: ${{ github.workflow }}'
         echo 'github.workspace: ${{ github.workspace }}'
+      shell: bash
 
     - name: Run-tests
       run: |
