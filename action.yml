@@ -14,41 +14,13 @@ inputs:
 #    required: false
 #    default: false
 outputs:
-  status:
+  output1:
     description: 'output status'
+    value: 'python-deploy-ghaction:: use-elasticsearch:${{ inputs.use-elasticsearch }}'
 #    value: 'python-deploy-ghaction:: use-elasticsearch:${{ inputs.use-elasticsearch }} use-postgresql:${{ inputs.use-postgresql }} success:${{ success() }}'
-    value: 'python-deploy-ghaction:: use-elasticsearch:${{ inputs.use-elasticsearch }} success:${{ success() }}'
 runs:
   using: 'composite'
   steps: 
-    - name: Set up Python ${{ inputs.python-version }}
-      uses: actions/setup-python@v2
-      with:
-        python-version: ${{ inputs.python-version }}
-    - name: Cache pip
-      uses: actions/cache@v2
-      with:
-        # This path is specific to Ubuntu
-        path: ~/.cache/pip
-        # Look to see if there is a cache hit for the corresponding requirements file
-        key: ${{ runner.os }}-pip-${{ hashFiles('requirements.txt') }}
-        restore-keys: |
-          ${{ runner.os }}-pip-
-          ${{ runner.os }}-
-
-    - name: Configure sysctl limits
-      run: |
-        sudo swapoff -a
-        sudo sysctl -w vm.swappiness=1
-        sudo sysctl -w fs.file-max=262144
-        sudo sysctl -w vm.max_map_count=262144
-
-    - name: Runs Elasticsearch
-      uses: elastic/elastic-github-actions/elasticsearch@master
-      with:
-        stack-version: 7.6.0
-      if ${{ inputs.use-elasticsearch }}
-
     - name: 'debug'
       run: |
         echo 'github.action: ${{ github.action }}'
@@ -61,7 +33,7 @@ runs:
 
     - name: Run-tests
       run: |
-        wget -q --waitretry=1 --retry-connrefused -T 10 -O - http://127.0.0.1:9200
+#        wget -q --waitretry=1 --retry-connrefused -T 10 -O - http://127.0.0.1:9200
         [[ -f ./run-tests.sh ]] && ./run-tests.sh
       shell: bash
 
